@@ -30,6 +30,9 @@
     "tailwind-merge": "^3.5.0",
     "tailwindcss-animate": "^1.0.7"
   },
+  "engines": {
+    "node": "18.x"
+  },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
