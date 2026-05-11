@@ -52,26 +52,28 @@
                                                                                                                             
   ---                                                                                                                         
    
-  ## Architecture                                                                                                             
-                                                                                                                            
-  src/
-  ├── app/
-  │   ├── auth/               # Login, signup, email verify, OAuth callback
-  │   ├── dashboard/          # Root layout (nav, badges) + home page
-  │   ├── card/               # How to Date Me card editor
-  │   ├── profile/
-  │   │   ├── [username]/     # Public profile + resonance modal                                                              
-  │   │   └── edit/           # Profile settings
-  │   ├── resonances/         # Resonance inbox — accept or pass                                                              
-  │   ├── messages/                                                                                                         
-  │   │   ├── page.tsx        # Conversation list (sorted by latest message)                                                  
-  │   │   └── [conversationId]/  # Real-time chat view
-  │   ├── rant-room/          # Post feed — write (SAFE_SPACE) or read (everyone)                                             
-  │   ├── lessons/            # Same feed, read-only entry point for LEARNING                                               
-  │   └── drills/             # Scenario quiz for LEARNING users                                                              
-  ├── components/shared/                  
-  ├── lib/supabase/           # Client + server Supabase helpers                                                              
-  └── types/                  # Shared TypeScript types, CARD_QUESTIONS                                                       
+    ## Architecture                             
+                                              
+  \```                                    
+  src/                                                                                                                        
+  ├── app/                                                                                                                    
+  │   ├── auth/                  # Login, signup, email verify, OAuth callback                                                
+  │   ├── dashboard/             # Root layout (nav, badges) + home page                                                      
+  │   ├── card/                  # How to Date Me card editor                                                               
+  │   ├── profile/                        
+  │   │   ├── [username]/        # Public profile + resonance modal
+  │   │   └── edit/              # Profile settings                                                                           
+  │   ├── resonances/            # Resonance inbox — accept or pass
+  │   ├── messages/                                                                                                           
+  │   │   ├── page.tsx           # Conversation list, sorted by latest message                                              
+  │   │   └── [conversationId]/  # Real-time chat view                                                                        
+  │   ├── rant-room/             # Post feed — write (SAFE_SPACE) or read (everyone)
+  │   ├── lessons/               # Same feed, read-only for LEARNING users                                                    
+  │   └── drills/                # Scenario quiz for LEARNING users                                                         
+  ├── components/shared/         # Shared UI components                                                                       
+  ├── lib/supabase/              # Client + server Supabase helpers
+  └── types/                     # Shared TypeScript types, CARD_QUESTIONS                                                    
+  \```                                                      
                                           
   ### Key design decisions                                                                                                    
                                                                                                                               
@@ -93,14 +95,16 @@
                                                                                                                               
   ---                                                                                                                       
 
-  ## Database schema (9 tables)
-
-  User                — id, username, email, experience, genderIdentity, avatarUrl, bio
-  DatingCard          — userId, onSupport, onSafety, onFalling, onConflict, onLove, onAnxiety, onGrowth, isPublic
-  Resonance           — id, fromUserId, toUserId, cardQuoteField, cardQuoteText, message, status (PENDING/ACCEPTED/PASSED)
-  Conversation        — id, resonanceId, user1Id, user2Id, user1LastReadAt, user2LastReadAt                                   
-  Message             — id, conversationId, senderId, content, createdAt
-  Post                — id, authorId, title, content, type (RANT/STORY/HOW_TO), category, isAnonymous, isPublished            
-  Reaction            — id, postId, userId, type (HEART/FELT_THIS/NEEDED_THIS/HUG)                                            
-  Drill               — id, scenario, options (JSON), correctIndex, explanation, category
-  DrillAttempt        — id, drillId, userId, selectedIndex, isCorrect                                                         
+ ## Database schema (9 tables)                                                                                               
+   
+  | Table | Key columns |                                                                                                     
+  |---|---|                                                                                                                 
+  | `User` | id, username, email, experience, genderIdentity, avatarUrl, bio |
+  | `DatingCard` | userId, onSupport, onSafety, onFalling, onConflict, onLove, onAnxiety, onGrowth, isPublic |                
+  | `Resonance` | id, fromUserId, toUserId, cardQuoteField, cardQuoteText, message, status |
+  | `Conversation` | id, resonanceId, user1Id, user2Id, user1LastReadAt, user2LastReadAt |                                    
+  | `Message` | id, conversationId, senderId, content, createdAt |                                                          
+  | `Post` | id, authorId, title, content, type, category, isAnonymous, isPublished |                                         
+  | `Reaction` | id, postId, userId, type |   
+  | `Drill` | id, scenario, options (JSON), correctIndex, explanation, category |                                             
+  | `DrillAttempt` | id, drillId, userId, selectedIndex, isCorrect |
