@@ -52,7 +52,7 @@
                                                                                                                             
   ---                                                                                                                         
    
-    ## Architecture                             
+## Architecture                             
                                               
   \```                                    
   src/                                                                                                                        
