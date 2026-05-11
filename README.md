@@ -14,7 +14,8 @@
   | Experience | Who | What they do |
   |---|---|---|
   | **Safe Space** | Women | Write rants, stories, and how-tos. Fill out their card. Receive and accept resonances. |
-  | **Learning** | Men | Read those stories as lessons. Take drills to test understanding. Discover people through their cards. |                                    
+  | **Learning** | Men | Read those stories as lessons. Take drills to test understanding. Discover people through their cards. |             
+  
                                           
   Both sides can browse cards, send resonances, and message each other once connected.
                                                                                                                               
