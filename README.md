@@ -53,8 +53,7 @@
   ---                                                                                                                         
    
 ## Architecture                             
-                                              
-  \```                                    
+                                                                            
   src/                                                                                                                        
   ├── app/                                                                                                                    
   │   ├── auth/                  # Login, signup, email verify, OAuth callback                                                
@@ -72,8 +71,7 @@
   │   └── drills/                # Scenario quiz for LEARNING users                                                         
   ├── components/shared/         # Shared UI components                                                                       
   ├── lib/supabase/              # Client + server Supabase helpers
-  └── types/                     # Shared TypeScript types, CARD_QUESTIONS                                                    
-  \```                                                      
+  └── types/                     # Shared TypeScript types, CARD_QUESTIONS                                                                                       
                                           
   ### Key design decisions                                                                                                    
                                                                                                                               
