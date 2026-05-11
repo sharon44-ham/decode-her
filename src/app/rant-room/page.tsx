@@ -22,7 +22,7 @@ export default async function RantRoomPage() {
     .limit(40);
 
   // Fetch authors for non-anonymous posts
-  const authorIds = [...new Set((rawPosts ?? []).map((p) => p.userId))];
+  const authorIds = Array.from(new Set((rawPosts ?? []).map((p) => p.userId)));
   const { data: authors } = authorIds.length
     ? await supabase.from("User").select("id, username, avatarUrl").in("id", authorIds)
     : { data: [] };

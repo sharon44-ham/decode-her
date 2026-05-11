@@ -15,7 +15,7 @@ export default async function LessonsPage() {
     .order("createdAt", { ascending: false })
     .limit(40);
 
-  const authorIds = [...new Set((rawPosts ?? []).map((p) => p.userId))];
+  const authorIds = Array.from(new Set((rawPosts ?? []).map((p) => p.userId)));
   const { data: authors } = authorIds.length
     ? await supabase.from("User").select("id, username, avatarUrl").in("id", authorIds)
     : { data: [] };
