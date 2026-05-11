@@ -1,0 +1,244 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── USER ────────────────────────────────────────────────────────────────────
+
+model User {
+  id             String     @id @default(cuid())
+  email          String     @unique
+  username       String     @unique
+  genderIdentity String?                      // free-text, optional
+  experience     Experience                   // which track they chose
+  avatarUrl      String?
+  bio            String?
+  streak         Int        @default(0)
+  lastStreakAt   DateTime?
+  createdAt      DateTime   @default(now())
+
+  // relations
+  datingCard         DatingCard?
+  lessonProgress     LessonProgress[]
+  drillResponses     DrillResponse[]
+  posts              Post[]
+  rants              Rant[]
+  reactions          Reaction[]
+  flags              Flag[]
+  resonancesSent     Resonance[] @relation("ResonanceSent")
+  resonancesReceived Resonance[] @relation("ResonanceReceived")
+}
+
+enum Experience {
+  LEARNING     // reads women's posts, does drills, learns
+  SAFE_SPACE   // writes rants, tutorials, stories
+}
+
+// ─── HOW TO DATE ME CARD ─────────────────────────────────────────────────────
+// Filled out during onboarding — the core identity feature
+
+model DatingCard {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  shareToken String   @unique @default(cuid())
+  isPublic   Boolean  @default(false)
+
+  // Deep reflection answers (all long-form text)
+  onSupport        String?   // "What does support look like for you?"
+  onBeingUnderstood String?  // "A moment you felt completely misunderstood?"
+  onDepth          String?   // "Something that takes time to understand about you"
+  onConflict       String?   // "What does a conflict handled right look like?"
+  onPatterns       String?   // "Something you've had to explain in every relationship"
+  onSafety         String?   // "Who are you when you feel truly safe?"
+  onLoveLanguage   String?   // "Love language in practice, day to day"
+  onFalling        String?   // "How do you know you're falling for someone?"
+  dealbreakers     String[]
+  greenFlags       String[]
+  funFact          String?
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─── POSTS (women's stories, tutorials, rants made public) ───────────────────
+// These are the content engine — LEARNING track users read these
+
+model Post {
+  id               String      @id @default(cuid())
+  userId           String
+  title            String?
+  content          String
+  category         PostCategory
+  type             PostType
+  isAnonymous      Boolean     @default(true)
+  published        Boolean     @default(false)    // set true after moderation
+  moderationStatus ModStatus   @default(PENDING)
+  moderationNote   String?
+  createdAt        DateTime    @default(now())
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reactions Reaction[]
+  flags     Flag[]
+  progress  LessonProgress[]  // track which LEARNING users have "read" this
+}
+
+enum PostCategory {
+  TEXTING
+  FIRST_DATES
+  CONFLICT
+  COMMUNICATION
+  BOUNDARIES
+  LOVE_LANGUAGES
+  RED_FLAGS
+  UNDERSTANDING
+  GENERAL
+}
+
+enum PostType {
+  RANT        // raw frustration / venting
+  TUTORIAL    // "here's what to actually do"
+  STORY       // a specific experience
+  LESSON      // structured insight
+}
+
+// ─── RANT ROOM (private, only SAFE_SPACE users see each other's rants) ────────
+
+model Rant {
+  id               String    @id @default(cuid())
+  userId           String
+  content          String
+  isAnonymous      Boolean   @default(true)
+  published        Boolean   @default(false)
+  moderationStatus ModStatus @default(PENDING)
+  createdAt        DateTime  @default(now())
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reactions Reaction[]
+  flags     Flag[]
+}
+
+enum ModStatus {
+  PENDING
+  APPROVED
+  FLAGGED
+  REJECTED
+}
+
+// ─── REACTIONS ────────────────────────────────────────────────────────────────
+
+model Reaction {
+  id        String       @id @default(cuid())
+  userId    String
+  type      ReactionType
+  postId    String?
+  rantId    String?
+  createdAt DateTime     @default(now())
+
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post? @relation(fields: [postId], references: [id], onDelete: Cascade)
+  rant Rant? @relation(fields: [rantId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId, type])
+  @@unique([userId, rantId, type])
+}
+
+enum ReactionType {
+  HEART       // ❤️
+  FELT_THIS   // 🙌
+  NEEDED_THIS // 💯
+  HUG         // 🤗
+}
+
+// ─── COMMUNITY FLAGS (replaces AI moderation) ────────────────────────────────
+
+model Flag {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String?
+  rantId    String?
+  reason    String
+  createdAt DateTime @default(now())
+
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post? @relation(fields: [postId], references: [id], onDelete: Cascade)
+  rant Rant? @relation(fields: [rantId], references: [id], onDelete: Cascade)
+}
+
+// ─── EMPATHY DRILLS ───────────────────────────────────────────────────────────
+
+model EmpathyDrill {
+  id          String      @id @default(cuid())
+  scenario    String
+  context     String
+  options     Json        // [{id, text, feedback}]
+  bestOption  String
+  category    PostCategory
+  explanation String
+  published   Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+
+  responses DrillResponse[]
+}
+
+model DrillResponse {
+  id           String   @id @default(cuid())
+  userId       String
+  drillId      String
+  chosenOption String
+  isCorrect    Boolean
+  createdAt    DateTime @default(now())
+
+  user  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  drill EmpathyDrill @relation(fields: [drillId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, drillId])
+}
+
+// ─── RESONANCE (the connection mechanic — unique to DECODE HER) ──────────────
+// A LEARNING user reads a SAFE_SPACE user's card, picks a quote, writes one
+// sentence about what stayed with him. She sees "You moved someone" and decides
+// to let them in or pass silently.
+
+model Resonance {
+  id             String          @id @default(cuid())
+  fromUserId     String          // LEARNING user who sent it
+  toUserId       String          // SAFE_SPACE user who received it
+  cardQuoteField String          // which field of her card he quoted (e.g. "onConflict")
+  cardQuoteText  String          // the actual text he quoted
+  message        String          // his one sentence — what specifically stayed with him
+  status         ResonanceStatus @default(PENDING)
+  createdAt      DateTime        @default(now())
+
+  fromUser User @relation("ResonanceSent",     fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser   User @relation("ResonanceReceived", fields: [toUserId],   references: [id], onDelete: Cascade)
+
+  @@unique([fromUserId, toUserId]) // one resonance per person — it's not a like button
+}
+
+enum ResonanceStatus {
+  PENDING   // she hasn't responded
+  ACCEPTED  // she let them in
+  PASSED    // she passed silently — he never knows
+}
+
+// ─── LESSON PROGRESS (tracks which posts/drills LEARNING users completed) ────
+
+model LessonProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  postId      String?
+  drillId     String?
+  completedAt DateTime @default(now())
+
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post? @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+}

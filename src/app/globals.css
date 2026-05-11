@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* DECODE HER — Soft Lavender Palette */
+    --background: 260 60% 99%;          /* #FAF8FF barely-there lavender */
+    --foreground: 263 50% 18%;          /* #1A0F3D deep warm purple-dark */
+
+    --card: 0 0% 100%;                  /* pure white */
+    --card-foreground: 263 50% 18%;
+
+    --primary: 263 52% 62%;             /* #8B72D4 soft medium lavender */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 330 85% 82%;           /* #F7A8CE soft blush pink */
+    --secondary-foreground: 263 50% 18%;
+
+    --muted: 260 30% 95%;               /* #F2EFF9 very soft lavender */
+    --muted-foreground: 263 20% 52%;    /* #7B74A0 medium lavender-grey */
+
+    --accent: 35 90% 68%;               /* #F5A64A warm peach */
+    --accent-foreground: 263 50% 18%;
+
+    --border: 260 28% 88%;              /* #DDD6F0 soft lavender border */
+    --input: 260 30% 95%;
+    --ring: 263 52% 62%;
+
+    --radius: 1rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { @apply bg-background; }
+  ::-webkit-scrollbar-thumb {
+    background: #C4B5FD;
+    border-radius: 9999px;
+  }
+}
+
+@layer utilities {
+  /* Safe Space — lavender to blush */
+  .safe-space-gradient {
+    background: linear-gradient(135deg, #8B72D4 0%, #F7A8CE 100%);
+  }
+
+  /* Learning — lavender to peach */
+  .learning-gradient {
+    background: linear-gradient(135deg, #A78BFA 0%, #F5A64A 100%);
+  }
+
+  /* Hero background — dreamy lavender mist */
+  .hero-gradient {
+    background:
+      radial-gradient(ellipse at 70% 10%, rgba(167,139,250,0.18) 0%, transparent 55%),
+      radial-gradient(ellipse at 15% 85%, rgba(247,168,206,0.14) 0%, transparent 50%),
+      #FAF8FF;
+  }
+
+  /* Soft white card with lavender shadow */
+  .card-soft {
+    @apply bg-white border border-border rounded-2xl;
+    box-shadow: 0 2px 24px rgba(139, 114, 212, 0.08);
+  }
+
+  .shadow-lavender {
+    box-shadow: 0 4px 32px rgba(139, 114, 212, 0.15);
+  }
+
+  .glow-primary {
+    box-shadow: 0 0 36px rgba(139, 114, 212, 0.3);
+  }
+}
