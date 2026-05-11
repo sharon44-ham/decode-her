@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
-import { Heart, ArrowLeft, User, Check, ChevronRight, MessageCircle, ExternalLink } from "lucide-react";
+import { Heart, ArrowLeft, User, Check, MessageCircle, ExternalLink } from "lucide-react";
 import { CARD_QUESTIONS } from "@/types";
 
 interface Resonance {
